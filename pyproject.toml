@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "grok-gemini"
+version = "0.0.7"
+description = "Explore Goolge Gemini generative AI services."
+authors = ["AxlER8R <axl@axler8r.io>"]
+license = "MIT"
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+google-generativeai = "^0.8.1"
+loguru = "^0.7.2"
+python-dotenv = "^1.0.1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.8.0"
+isort = "^5.13.2"
+pytest = "^8.3.3"
+mypy = "^1.11.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
