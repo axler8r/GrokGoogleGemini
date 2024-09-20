@@ -8,6 +8,7 @@ __pycache__/
 
 # Environments
 .venv/
+.env
 
 # mypy
 .mypy_cache/
