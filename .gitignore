@@ -19,6 +19,9 @@ dmypy.json
 .env
 
 # user
+log/
+out/
+res/
 scratch/
 **/*.webp
 tags
