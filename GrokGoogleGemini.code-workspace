@@ -4,5 +4,23 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.exclude": {
+			"**/.DS_Store": true,
+			"**/.mypy_cache": true,
+			"**/.pytest_cache": true,
+			"**/__pycache__": true,
+			"**/Thumbs.db": true,
+			"**/tags": true,
+			"**/tags.lock": true,
+			"**/tags.temp": true,
+		},
+		"files.associations": {
+			"**/bin/*-*": "shellscript",
+		},
+		"material-icon-theme.folders.associations": {
+			"grokgemini": "python",
+			"scratch": "markdown",
+		},
+	}
 }

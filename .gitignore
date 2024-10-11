@@ -1,16 +1,26 @@
-# Byte-compiled / optimized / DLL files
+# run
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# test
+.pytest_cache/
 
-# Environments
-.venv/
-.env
-
-# mypy
+# check
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# develop
+.ipynb_checkpoints
+
+# env
+.venv/
+.env
+
+# user
+scratch/
+**/*.webp
+tags
+tags.lock
+tags.temp
