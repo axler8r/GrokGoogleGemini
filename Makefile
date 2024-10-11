@@ -25,8 +25,19 @@ deactivate:
 	@echo "Deactivating existing poetry shell..."
 	deactivate
 
-clean:
-	rm -rf __pycache__
+clean-runfiles:
+	rm -rf **/__pycache__
+
+clean-output:
+	rm -f $(OUT_DIR)/*
+
+clean-logs:
+	rm -f $(LOG_DIR)/*
+
+clean-resources:
+	rm -f $(RES_DIR)/*
+
+clean-all: clean-runfiles clean-output clean-logs clean-resources
 
 format:
 	@echo "Formatting $(PROJECT_NAME)..."
@@ -61,15 +72,19 @@ run:
 help:
 	@echo "Usage: make [target]"
 	@echo "Targets:"
-	@echo "  all:          Format, check, and test the project"
-	@echo "  activate:     Activate poetry shell"
-	@echo "  reactivate:   Reactivate the existing poetry shell"
-	@echo "  deactivate:   Deactivate the existing poetry shell"
-	@echo "  clean:        Clean the project"
-	@echo "  format:       Format the project"
-	@echo "  check:        Check implementation"
-	@echo "  check-tests:  Check tests"
-	@echo "  test:         Test the project"
-	@echo "  test-verbose: Test the project with verbose output"
-	@echo "  run:          Run the project"
-	@echo "  help:         Show this help message"
+	@echo "  all:             Format, check, and test the project"
+	@echo "  activate:        Activate poetry shell"
+	@echo "  reactivate:      Reactivate the existing poetry shell"
+	@echo "  deactivate:      Deactivate the existing poetry shell"
+	@echo "  clean-all:       Clean all generated files"
+	@echo "  clean-resources: Clean resource files"
+	@echo "  clean-logs:      Clean log files"
+	@echo "  clean-output:    Clean output files"
+	@echo "  clean-runfiles:  Clean run files"
+	@echo "  format:          Format the project"
+	@echo "  check:           Check implementation"
+	@echo "  check-tests:     Check tests"
+	@echo "  test:            Test the project"
+	@echo "  test-verbose:    Test the project with verbose output"
+	@echo "  run:             Run the project"
+	@echo "  help:            Show this help message"
