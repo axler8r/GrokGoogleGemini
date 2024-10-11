@@ -1,9 +1,11 @@
 import argparse
 import os
-from typing import Optional
+import sys
+from typing import Any, Optional
 
 import google.generativeai as genai
 from dotenv import load_dotenv
+from loguru import logger
 
 __version__ = "0.1.0"
 
@@ -20,6 +22,7 @@ def _parse_arguments() -> argparse.Namespace:
     parser.add_argument("-s", "--system-instruction", type=argparse.FileType("r"), help="File containing the system instructions")
     parser.add_argument("-m", "--model", type=str, help="Model to use for generation", default="gemini-1.5-flash")
     parser.add_argument("-o", "--output", type=str, help="Output file name")
+    parser.add_argument("-v", "--verbose", action="count", help="Enable verbose logging", default=0)
 
     group: argparse._MutuallyExclusiveGroup = parser.add_mutually_exclusive_group()
     group.add_argument("-l", "--list-models", action="store_true", help="List available models")
@@ -36,11 +39,26 @@ def _parse_arguments() -> argparse.Namespace:
 def _generate_text(
     instruction: str, model: str, api_key: str, system_instruction: Optional[str] = None
 ) -> str:
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(model, system_instruction=system_instruction)
-    request: str = " ".join(instruction)
-    response = model.generate_content(request)
-    return response.text
+    logger.info("Generating text content")
+    logger.debug(f"Instruction: {instruction}")
+    logger.debug(f"Model: {model}")
+    logger.debug(f"System Instruction: {system_instruction}")
+
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel(model, system_instruction=system_instruction)
+        content: Any = model.generate_content(instruction)
+
+        logger.trace(f"Response: {content}")
+        return content.text
+
+    except genai.APIError as e:
+        logger.error(f"API error occurred: {e}")
+        raise
+
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+        raise
 
 
 def _generate_image() -> None:
@@ -52,17 +70,48 @@ def _describe_image() -> None:
 
 
 if __name__ == "__main__":
+    # logger.info("Parsing command line arguments")
+    args: argparse.Namespace = _parse_arguments()
+    # logger.info("Parsed command line arguments")
+
+    # logger.info("Configuring logging")
+    if args.verbose == 0:
+        logger.remove()
+        logger.add(sink=sys.stderr, level="WARNING")
+    elif args.verbose == 1:
+        logger.remove()
+        logger.add(sink=sys.stderr, level="INFO")
+    elif args.verbose == 2:
+        logger.remove()
+        logger.add(sink=sys.stderr, level="DEBUG")
+    else:
+        logger.remove()
+        logger.add(sink=sys.stderr, level="TRACE")
+
+    logger.info("Parse command line arguments")
+    logger.trace(args)
+    logger.info("Parsed command line arguments")
+
+    logger.info("Configure logging")
+    logger.trace(f"Logger: {logger}")
+    logger.info("Configured logging")
+
+    logger.info("Fetch environment variables")
+
     load_dotenv()
     api_key: str | None = os.getenv("AX_GOOGLE_GEMNINI_API_KEY")
     if not api_key:
         raise ValueError("API key not found in environment variables")
 
-    args: argparse.Namespace = _parse_arguments()
+    logger.info("Fetched environment variables")
+
     if args.generate_text:
+        logger.info("Generate text content")
+
         system_instruction: str | None = (
             args.system_instruction.read() if args.system_instruction else None
         )
-        result: str = _generate_text(
+        content: str = _generate_text(
             instruction=args.instruction,
             model=args.model,
             api_key=api_key,
@@ -70,9 +119,13 @@ if __name__ == "__main__":
         )
         if args.output:
             with open(args.output, "w") as file:
-                file.write(result)
+                file.write(content)
         else:
-            print(result)
+            print(content)
+
+        logger.trace(f"System Instruction: {system_instruction}")
+        logger.trace(f"Content: {content}")
+        logger.info("Generated text content")
     elif args.generate_image:
         _generate_image()
     elif args.describe_image:
