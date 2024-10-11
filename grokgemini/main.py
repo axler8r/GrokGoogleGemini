@@ -16,7 +16,7 @@ def _read_image_file(file_path: str) -> bytes:
 def _parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate contect using Google Gemini API")
     parser.add_argument("-V", "--version", action="version", version=f"%(prog)s {__version__}")
-    parser.add_argument("-s", "--system-prompt", type=argparse.FileType("r"), help="File containing the system prompt",)
+    parser.add_argument("-s", "--system-instruction", type=argparse.FileType("r"), help="File containing the system instructions",)
     parser.add_argument("-m", "--model", type=str, help="Model to use for generation", default="gemini-1.5-flash")
 
     group: argparse._MutuallyExclusiveGroup = parser.add_mutually_exclusive_group()
@@ -25,16 +25,18 @@ def _parse_arguments() -> argparse.Namespace:
     group.add_argument("-i", "--generate-image", action="store_true", help="Generate image")
     group.add_argument("-d", "--describe-image", type=argparse.FileType("rb"), help="Describe image (valid formats: jpeg, png)",)
 
-    parser.add_argument("input", nargs="*", help="Input for the generation")
+    parser.add_argument("instruction", nargs="*", help="Input for the generation")
 
     return parser.parse_args()
 # fmt: on
 
 
-def _generate_text(model: str, input: str) -> None:
+def _generate_text(
+    instruction: str, model: str, system_instruction: str = None
+) -> None:
     genai.configure(api_key=os.getenv("AX_GOOGLE_GEMNINI_API_KEY"))
-    model = genai.GenerativeModel(model)
-    request: str = " ".join(input)
+    model = genai.GenerativeModel(model, system_instruction=system_instruction)
+    request: str = " ".join(instruction)
     response: genai.GenerateContentResponse = model.generate_content(request)
     print(response)
 
@@ -61,10 +63,16 @@ def _describe_image() -> None:
 
 if __name__ == "__main__":
     _ARGS: argparse.Namespace = _parse_arguments()
+    model: str = _ARGS.model
+    instruction: str = _ARGS.instruction
+    system_instruction = None
+    if _ARGS.system_instruction is not None:
+        system_instruction: str = _ARGS.system_instruction.read()
 
     load_dotenv()
+
     if _ARGS.generate_text:
-        _generate_text(_ARGS.model, _ARGS.input)
+        _generate_text(instruction, model, system_instruction)
     if _ARGS.generate_image:
         _generate_image()
     if _ARGS.describe_image:
