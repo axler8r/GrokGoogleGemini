@@ -9,7 +9,7 @@ def get_request() -> str:
     return input("Please enter your query: ")
 
 
-def main():
+
     load_dotenv()
     genai.configure(api_key=os.getenv("AX_GOOGLE_GEMNINI_API_KEY"))
     model = genai.GenerativeModel("gemini-1.5-flash")
@@ -19,4 +19,3 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
