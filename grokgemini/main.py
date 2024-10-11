@@ -1,5 +1,6 @@
 import argparse
 import os
+from typing import Optional
 
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -18,6 +19,7 @@ def _parse_arguments() -> argparse.Namespace:
     parser.add_argument("-V", "--version", action="version", version=f"%(prog)s {__version__}")
     parser.add_argument("-s", "--system-instruction", type=argparse.FileType("r"), help="File containing the system instructions")
     parser.add_argument("-m", "--model", type=str, help="Model to use for generation", default="gemini-1.5-flash")
+    parser.add_argument("-o", "--output", type=str, help="Output file name")
 
     group: argparse._MutuallyExclusiveGroup = parser.add_mutually_exclusive_group()
     group.add_argument("-l", "--list-models", action="store_true", help="List available models")
@@ -32,48 +34,50 @@ def _parse_arguments() -> argparse.Namespace:
 
 
 def _generate_text(
-    instruction: str, model: str, system_instruction: str = None
-) -> None:
-    genai.configure(api_key=os.getenv("AX_GOOGLE_GEMNINI_API_KEY"))
+    instruction: str, model: str, api_key: str, system_instruction: Optional[str] = None
+) -> str:
+    genai.configure(api_key=api_key)
     model = genai.GenerativeModel(model, system_instruction=system_instruction)
     request: str = " ".join(instruction)
-    response: genai.GenerateContentResponse = model.generate_content(request)
-    print(response)
+    response = model.generate_content(request)
+    return response.text
 
 
 def _generate_image() -> None:
     raise NotImplementedError("Image generation is not yet implemented")
-    load_dotenv()
-    genai.configure(api_key=os.getenv("AX_GOOGLE_GEMNINI_API_KEY"))
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    request: str = _read_input()
-    response = model.generate_image(request)
-    print(response)
 
 
 def _describe_image() -> None:
     raise NotImplementedError("Image generation is not yet implemented")
-    load_dotenv()
-    genai.configure(api_key=os.getenv("AX_GOOGLE_GEMNINI_API_KEY"))
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    request: str = _read_image_file(_ARGS.describe_image.name)
-    response = model.describe_image(request)
-    print(response)
 
 
 if __name__ == "__main__":
-    _ARGS: argparse.Namespace = _parse_arguments()
-    model: str = _ARGS.model
-    instruction: str = _ARGS.instruction
-    system_instruction = None
-    if _ARGS.system_instruction is not None:
-        system_instruction: str = _ARGS.system_instruction.read()
-
     load_dotenv()
+    api_key: str | None = os.getenv("AX_GOOGLE_GEMNINI_API_KEY")
+    if not api_key:
+        raise ValueError("API key not found in environment variables")
 
-    if _ARGS.generate_text:
-        _generate_text(instruction, model, system_instruction)
-    if _ARGS.generate_image:
+    args: argparse.Namespace = _parse_arguments()
+    if args.generate_text:
+        system_instruction: str | None = (
+            args.system_instruction.read() if args.system_instruction else None
+        )
+        result: str = _generate_text(
+            instruction=args.instruction,
+            model=args.model,
+            api_key=api_key,
+            system_instruction=system_instruction,
+        )
+        if args.output:
+            with open(args.output, "w") as file:
+                file.write(result)
+        else:
+            print(result)
+    elif args.generate_image:
         _generate_image()
-    if _ARGS.describe_image:
+    elif args.describe_image:
         _describe_image()
+    elif args.list_models:
+        genai.configure(api_key=api_key)
+        models = genai.list_models()
+        print(models)
