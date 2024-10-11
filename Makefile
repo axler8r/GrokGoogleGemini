@@ -3,12 +3,21 @@ PYTHON = python3
 
 # location aliases
 PROJECT_NAME = grokgemini
-SOURCE_DIR = $(PROJECT_NAME)
-TEST_DIR = test
+SRC_DIR = $(PROJECT_NAME)
 DOC_DIR = doc
+LOG_DIR = log
+OUT_DIR = out
+RES_DIR = res
+TST_DIR = test
 
 # phony targets
-.PHONY: all activate deactivate reactivate clean check check-test test test-verbose run help
+.PHONY: all                                                              \
+		activate deactivate reactivate                                   \
+		clean-all clean-resources clean-logs clean-output clean-runfiles \
+		check check-test                                                 \
+		test test-verbose                                                \
+		run                                                              \
+		help
 
 # targets
 all: format check test
@@ -41,33 +50,33 @@ clean-all: clean-runfiles clean-output clean-logs clean-resources
 
 format:
 	@echo "Formatting $(PROJECT_NAME)..."
-	$(PYTHON) -m autoflake \
+	$(PYTHON) -m autoflake          \
 		--remove-all-unused-imports \
-		--remove-unused-variables \
-		--in-place \
-		--recursive $(SOURCE_DIR) $(TEST_DIR)
-	$(PYTHON) -m isort $(SOURCE_DIR) $(TEST_DIR)
-	$(PYTHON) -m black $(SOURCE_DIR) $(TEST_DIR)
+		--remove-unused-variables   \
+		--in-place                  \
+		--recursive $(SRC_DIR) $(TST_DIR)
+	$(PYTHON) -m isort $(SRC_DIR) $(TST_DIR)
+	$(PYTHON) -m black $(SRC_DIR) $(TST_DIR)
 
 check:
 	@echo "Checking $(PROJECT_NAME)..."
-	$(PYTHON) -m mypy --check-untyped-defs $(SOURCE_DIR)
+	$(PYTHON) -m mypy --check-untyped-defs $(SRC_DIR)
 
 check-test:
 	@echo "Checking $(PROJECT_NAME)..."
-	$(PYTHON) -m mypy $(TEST_DIR)
+	$(PYTHON) -m mypy $(TST_DIR)
 
 test:
-	@echo "Testing $(TEST_DIR)..."
-	$(PYTHON) -m pytest $(TEST_DIR)
+	@echo "Testing $(TST_DIR)..."
+	$(PYTHON) -m pytest $(TST_DIR)
 
 test-verbose:
-	@echo "Testing $(TEST_DIR)..."
-	$(PYTHON) -m pytest --verbose $(TEST_DIR)
+	@echo "Testing $(TST_DIR)..."
+	$(PYTHON) -m pytest --verbose $(TST_DIR)
 
 run:
 	@echo "Running $(PROJECT_NAME)..."
-	$(PYTHON) -m $(SOURCE_DIR).main 
+	$(PYTHON) -m $(SRC_DIR).main
 
 help:
 	@echo "Usage: make [target]"
