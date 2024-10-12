@@ -59,14 +59,9 @@ def _generate_content(
         model_instance = genai.GenerativeModel(
             model_name=model, system_instruction=system_instruction
         )
-        if stream:
-            content: GenerateContentResponse = model_instance.generate_content(
-                instruction, stream=True
-            )
-        else:
-            content: GenerateContentResponse = model_instance.generate_content(
-                instruction
-            )
+        content: GenerateContentResponse = model_instance.generate_content(
+            instruction, stream=stream
+        )
 
         __logger.trace(f"Response: {content}")
         return content
