@@ -4,7 +4,7 @@ import sys
 
 import google.generativeai as genai
 from dotenv import load_dotenv
-from loguru import logger
+from loguru import logger as __logger
 
 __version__ = "0.1.0"
 
@@ -33,25 +33,26 @@ def _parse_arguments() -> argparse.Namespace:
 def _generate_text(
     instruction: str, model: str, api_key: str, system_instruction: Optional[str] = None
 ) -> str:
-    logger.info("Generating text content")
-    logger.debug(f"Instruction: {instruction}")
-    logger.debug(f"Model: {model}")
-    logger.debug(f"System Instruction: {system_instruction}")
+    __logger.info("Generating content")
+    __logger.debug(f"Instruction: {instruction}")
+    __logger.debug(f"Model: {model}")
+    __logger.debug(f"System Instruction: {system_instruction}")
+    __logger.debug(f"Stream: {stream}")
 
     try:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel(model, system_instruction=system_instruction)
         content: Any = model.generate_content(instruction)
 
-        logger.trace(f"Response: {content}")
         return content.text
+        __logger.trace(f"Response: {content}")
 
     except genai.APIError as e:
-        logger.error(f"API error occurred: {e}")
+        __logger.error(f"API error occurred: {e}")
         raise
 
     except Exception as e:
-        logger.error(f"An unexpected error occurred: {e}")
+        __logger.error(f"An unexpected error occurred: {e}")
         raise
 
 
@@ -64,44 +65,41 @@ def _describe_image() -> None:
 
 
 if __name__ == "__main__":
-    # logger.info("Parsing command line arguments")
+    # __logger.info("Parse command line arguments")
     args: argparse.Namespace = _parse_arguments()
-    # logger.info("Parsed command line arguments")
+    # __logger.info("Parsed command line arguments")
 
-    # logger.info("Configuring logging")
+    # __logger.info("Configure logging")
     if args.verbose == 0:
-        logger.remove()
-        logger.add(sink=sys.stderr, level="WARNING")
+        __logger.remove()
+        __logger.add(sink=sys.stderr, level="WARNING")
     elif args.verbose == 1:
-        logger.remove()
-        logger.add(sink=sys.stderr, level="INFO")
+        __logger.remove()
+        __logger.add(sink=sys.stderr, level="INFO")
     elif args.verbose == 2:
-        logger.remove()
-        logger.add(sink=sys.stderr, level="DEBUG")
+        __logger.remove()
+        __logger.add(sink=sys.stderr, level="DEBUG")
     else:
-        logger.remove()
-        logger.add(sink=sys.stderr, level="TRACE")
+        __logger.remove()
+        __logger.add(sink=sys.stderr, level="TRACE")
 
-    logger.info("Parse command line arguments")
-    logger.trace(args)
-    logger.info("Parsed command line arguments")
+    __logger.info("Parse command line arguments")
+    __logger.trace(args)
+    __logger.info("Parsed command line arguments")
 
-    logger.info("Configure logging")
-    logger.trace(f"Logger: {logger}")
-    logger.info("Configured logging")
+    __logger.info("Configure logging")
+    __logger.trace(f"Logger: {__logger}")
+    __logger.info("Configured logging")
 
-    logger.info("Fetch environment variables")
-
+    __logger.info("Fetch environment variables")
     load_dotenv()
     api_key: str | None = os.getenv("AX_GOOGLE_GEMNINI_API_KEY")
     if not api_key:
         raise ValueError("API key not found in environment variables")
-
-    logger.info("Fetched environment variables")
+    __logger.info("Fetched environment variables")
 
     if args.generate_text:
-        logger.info("Generate text content")
-
+        __logger.info("Generate text content")
         system_instruction: str | None = (
             args.system_instruction.read() if args.system_instruction else None
         )
@@ -111,15 +109,17 @@ if __name__ == "__main__":
             api_key=api_key,
             system_instruction=system_instruction,
         )
+        __logger.trace(f"Model: {args.model}")
+        __logger.trace(f"System Instruction: {system_instruction}")
+        __logger.trace(f"Content: {content}")
+                __logger.trace(f"Chunk: {chunk.text}")
         if args.output:
             with open(args.output, "w") as file:
                 file.write(content)
         else:
             print(content)
+        __logger.info("Generated text content")
 
-        logger.trace(f"System Instruction: {system_instruction}")
-        logger.trace(f"Content: {content}")
-        logger.info("Generated text content")
     elif args.generate_image:
         _generate_image()
     elif args.describe_image:
