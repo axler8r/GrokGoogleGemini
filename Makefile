@@ -22,6 +22,11 @@ TST_DIR = test
 # targets
 all: format check test
 
+init: activate
+	@echo "Initializing $(PROJECT_NAME)..."
+	mkdir doc log out res
+	poetry install
+
 activate:
 	@echo "Activating poetry shell..."
 	poetry shell
@@ -74,6 +79,9 @@ test-verbose:
 	@echo "Testing $(TST_DIR)..."
 	$(PYTHON) -m pytest --verbose $(TST_DIR)
 
+changelog:
+	@echo "Releasing $(PROJECT_NAME)..."
+	git cliff --bump --config cfg/cliff.toml >> CHANGELOG.md
 run:
 	@echo "Running $(PROJECT_NAME)..."
 	$(PYTHON) -m $(SRC_DIR).main
@@ -82,6 +90,7 @@ help:
 	@echo "Usage: make [target]"
 	@echo "Targets:"
 	@echo "  all:             Format, check, and test the project"
+	@echo "  init:            Initialize the project"
 	@echo "  activate:        Activate poetry shell"
 	@echo "  reactivate:      Reactivate the existing poetry shell"
 	@echo "  deactivate:      Deactivate the existing poetry shell"
@@ -96,4 +105,5 @@ help:
 	@echo "  test:            Test the project"
 	@echo "  test-verbose:    Test the project with verbose output"
 	@echo "  run:             Run the project"
+	@echo "  changelog:       Update the changelog"
 	@echo "  help:            Show this help message"
