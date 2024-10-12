@@ -1,9 +1,12 @@
 import argparse
 import os
+import pprint
 import sys
+from typing import Optional
 
 import google.generativeai as genai
 from dotenv import load_dotenv
+from google.generativeai.types.generation_types import GenerateContentResponse
 from loguru import logger as __logger
 
 __version__ = "0.1.0"
@@ -18,6 +21,7 @@ def _parse_arguments() -> argparse.Namespace:
     parser.add_argument("-o", "--output", type=str, help="Output file name")
     parser.add_argument("-v", "--verbose", action="count", help="Enable verbose logging", default=0)
 
+    parser.add_argument("--stream", action="store_true", help="Stream the output")
     group: argparse._MutuallyExclusiveGroup = parser.add_mutually_exclusive_group()
     group.add_argument("-l", "--list-models", action="store_true", help="List available models")
     group.add_argument("-t", "--generate-text", action="store_true", help="Generate text content")
@@ -30,9 +34,13 @@ def _parse_arguments() -> argparse.Namespace:
 # fmt: on
 
 
-def _generate_text(
-    instruction: str, model: str, api_key: str, system_instruction: Optional[str] = None
-) -> str:
+def _generate_content(
+    instruction: str,
+    model: str,
+    api_key: str,
+    stream: bool = False,
+    system_instruction: Optional[str] = None,
+) -> GenerateContentResponse:
     __logger.info("Generating content")
     __logger.debug(f"Instruction: {instruction}")
     __logger.debug(f"Model: {model}")
@@ -41,11 +49,20 @@ def _generate_text(
 
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(model, system_instruction=system_instruction)
-        content: Any = model.generate_content(instruction)
+        model_instance = genai.GenerativeModel(
+            model_name=model, system_instruction=system_instruction
+        )
+        if stream:
+            content: GenerateContentResponse = model_instance.generate_content(
+                instruction, stream=True
+            )
+        else:
+            content: GenerateContentResponse = model_instance.generate_content(
+                instruction
+            )
 
-        return content.text
         __logger.trace(f"Response: {content}")
+        return content
 
     except genai.APIError as e:
         __logger.error(f"API error occurred: {e}")
@@ -103,21 +120,25 @@ if __name__ == "__main__":
         system_instruction: str | None = (
             args.system_instruction.read() if args.system_instruction else None
         )
-        content: str = _generate_text(
+        content: GenerateContentResponse = _generate_content(
             instruction=args.instruction,
             model=args.model,
             api_key=api_key,
+            stream=args.stream,
             system_instruction=system_instruction,
         )
         __logger.trace(f"Model: {args.model}")
         __logger.trace(f"System Instruction: {system_instruction}")
         __logger.trace(f"Content: {content}")
+        if args.stream:
+            for chunk in content:
                 __logger.trace(f"Chunk: {chunk.text}")
+                print(chunk.text)
+        else:
+            print(content.text)
         if args.output:
             with open(args.output, "w") as file:
-                file.write(content)
-        else:
-            print(content)
+                file.write(content.text)
         __logger.info("Generated text content")
 
     elif args.generate_image:
