@@ -1,18 +1,12 @@
 import argparse
 import os
 import sys
-from typing import Any, Optional
 
 import google.generativeai as genai
 from dotenv import load_dotenv
 from loguru import logger
 
 __version__ = "0.1.0"
-
-
-def _read_image_file(file_path: str) -> bytes:
-    with open(file_path, "rb") as file:
-        return file.read()
 
 
 # fmt: off
