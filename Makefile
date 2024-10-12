@@ -82,9 +82,15 @@ test-verbose:
 changelog:
 	@echo "Releasing $(PROJECT_NAME)..."
 	git cliff --bump --config cfg/cliff.toml >> CHANGELOG.md
+
+ifeq (run,$(firstword $(MAKECMDGOALS)))
+  RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  $(eval $(RUN_ARGS):;@:)
+endif
+
 run:
 	@echo "Running $(PROJECT_NAME)..."
-	$(PYTHON) -m $(SRC_DIR).main
+	$(PYTHON) -m $(SRC_DIR).main $(RUN_ARGS)
 
 help:
 	@echo "Usage: make [target]"
@@ -104,6 +110,15 @@ help:
 	@echo "  check-tests:     Check tests"
 	@echo "  test:            Test the project"
 	@echo "  test-verbose:    Test the project with verbose output"
-	@echo "  run:             Run the project"
 	@echo "  changelog:       Update the changelog"
+	@echo "  run:             See make run-help"
 	@echo "  help:            Show this help message"
+
+run-help:
+	@echo "Usage: make run -- [args]"
+	@echo "Arguments:"
+	@echo "  args: Arguments to pass to the grokgemini.main"
+	@echo "Examples:"
+	@echo "  make run -- --help runs grokgemini.main --help"
+	@echo "  make run -- -t <QUERY> runs grokgemini.main -t <QUERY>"
+	@echo "  make run -- -t <QUERY> -o out.gmi runs grokgemini.main -t <QUERY> -o out.gmi"
