@@ -80,10 +80,6 @@ def _generate_content(
         raise
 
 
-def _generate_image() -> None:
-    raise NotImplementedError("Image generation is not yet implemented")
-
-
 def _describe_image() -> None:
     raise NotImplementedError("Image generation is not yet implemented")
 
@@ -148,8 +144,6 @@ if __name__ == "__main__":
                 file.write(content.text)
         __logger.info("Generated text content")
 
-    elif args.generate_image:
-        _generate_image()
     elif args.describe_image:
         _describe_image()
     elif args.list_models:
