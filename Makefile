@@ -65,7 +65,10 @@ format:
 
 check:
 	@echo "Checking $(PROJECT_NAME)..."
-	$(PYTHON) -m mypy --check-untyped-defs $(SRC_DIR)
+	$(PYTHON) -m mypy            \
+		--check-untyped-defs     \
+		--ignore-missing-imports \
+		$(SRC_DIR)
 
 check-test:
 	@echo "Checking $(PROJECT_NAME)..."
