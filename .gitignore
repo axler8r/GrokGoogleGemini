@@ -1,0 +1,29 @@
+# run
+__pycache__/
+*.py[cod]
+*$py.class
+
+# test
+.pytest_cache/
+
+# check
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# develop
+.ipynb_checkpoints
+
+# env
+.venv/
+.env
+
+# user
+log/
+out/
+res/
+scratch/
+**/*.webp
+tags
+tags.lock
+tags.temp
