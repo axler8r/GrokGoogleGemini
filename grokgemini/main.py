@@ -149,4 +149,5 @@ if __name__ == "__main__":
     elif args.list_models:
         genai.configure(api_key=api_key)
         models = genai.list_models()
-        print(models)
+        for model in models:
+            pprint.pprint(model.display_name)
