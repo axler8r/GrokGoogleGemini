@@ -8,6 +8,11 @@ __version__ = "0.7.0"
 
 # fmt: off
 def parse_arguments() -> argparse.Namespace:
+    class DependOnFileArgument(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            if not getattr(namespace, "file"):
+                parser.error("Missing one or more --file arguments")
+
     parser = argparse.ArgumentParser(description="Generate content using Google Gemini API")
 
     # information arguments
