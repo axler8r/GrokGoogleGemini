@@ -4,8 +4,8 @@ import pprint
 import google.generativeai as genai
 from google.generativeai.types.generation_types import GenerateContentResponse
 
-from grokgemini.content import describe, generate
-from grokgemini.util import configure_logger, get_key, make_believe, parse_arguments
+from grokgemini.content import generate
+from grokgemini.util import get_key, parse_arguments
 
 
 def _generate(args, api_key):
@@ -31,14 +31,12 @@ def _generate(args, api_key):
 
 if __name__ == "__main__":
     args: argparse.Namespace = parse_arguments()
-    make_believe(args)
-
     api_key = get_key()
 
-    if args.generate_text:
+    if args.generate:
         _generate(args, api_key)
-    elif args.describe_image:
-        describe()
+    elif args.describe:
+        print(f"Describing image(s): {args.describe}")
     elif args.list_models:
         genai.configure(api_key=api_key)
         models = genai.list_models()

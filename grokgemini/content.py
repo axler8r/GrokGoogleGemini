@@ -24,7 +24,7 @@ def generate(
     except genai.APIError as e:
         raise
 
-    except Exception as e:
+    except Exception:
         raise
 
 

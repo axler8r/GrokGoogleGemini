@@ -1,6 +1,5 @@
 import argparse
 import os
-import sys
 
 from dotenv import load_dotenv
 
@@ -19,23 +18,25 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--model", type=str, help="Model to use for generation", default="gemini-1.5-flash",)
     parser.add_argument("--output", type=str, help="Output file name")
     parser.add_argument("--stream", action="store_true", help="Stream the output")
-    # parser.add_argument("--multi-modal", action="store_true", help="Enable multi-modal generation")
     # parser.add_argument("--configuration", type=argparse.FileType("r"), help="Configuration file")
+    parser.add_argument("--file", type=argparse.FileType("rb"), action="append", help="Binary file(s) to process")
 
     # task arguments
     group: argparse._MutuallyExclusiveGroup = parser.add_mutually_exclusive_group()
     group.add_argument("--list-models", action="store_true", help="List available models")
-    group.add_argument("-t", "--generate-text", action="store_true", help="Generate text content")
-    group.add_argument("-d", "--describe-image", type=argparse.FileType("rb"), help="Describe image (valid formats: jpeg, png)",)
-
+    group.add_argument("--generate", action="store_true", help="Generate text content")
+    group.add_argument("--describe", action=DependOnFileArgument, help="Describe one or more images")
+    
     # positional arguments
     parser.add_argument("instruction", nargs="*", help="Input for the generation")
 
-    return parser.parse_args()
+    try:
+        namesapce: argparse.Namespace = parser.parse_args()
+    except argparse.ArgumentError as e:
+        raise e
+
+    return namesapce
 # fmt: on
-
-
-
 
 
 def get_key():
