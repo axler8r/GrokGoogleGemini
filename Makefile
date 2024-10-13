@@ -17,7 +17,7 @@ TST_DIR = test
 		check check-test                                                 \
 		test test-verbose                                                \
 		run                                                              \
-		help
+		help help-run
 
 # targets
 all: format check test
