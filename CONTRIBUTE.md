@@ -10,7 +10,7 @@ submitting contributions.
 + Open a terminal in the devcontainer
 + Install dependencies: `make activate`, `make init`
 + Familiarize yourself with our codebase
-+ Run the application: `python -m grokgemini.main --help`
++ Run the application: `python -m grokgemini.main --help` or `make run -- --help`
 + Explore `make` targets: `make help`
 
 ### Code Conventions
