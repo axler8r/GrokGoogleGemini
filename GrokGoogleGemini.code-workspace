@@ -18,6 +18,10 @@
 		"files.associations": {
 			"**/bin/*-*": "shellscript",
 		},
+		"material-icon-theme.files.associations": {
+			"pyproject.toml": "settings",
+			"poetry.lock": "lock",
+		},
 		"material-icon-theme.folders.associations": {
 			"grokgemini": "python",
 			"scratch": "markdown",

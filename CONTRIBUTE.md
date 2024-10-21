@@ -6,9 +6,9 @@ submitting contributions.
 ### Getting Started
 + Run `code GrokGoogleGemini.code-workspace` to open the project in VS Code
 + Start the devcontainer
-+ Select the Python interpreter, `Ctrl+Shift+P` > `Python: Select Interpreter` > `.venv/bin/python`
 + Open a terminal in the devcontainer
 + Install dependencies: `make activate`, `make init`
++ Select the Python interpreter, `Ctrl+Shift+P` > `Python: Select Interpreter` > `.venv/bin/python`
 + Familiarize yourself with our codebase
 + Run the application: `python -m grokgemini.main --help`
 + Explore `make` targets: `make help`

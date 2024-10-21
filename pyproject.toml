@@ -10,16 +10,23 @@ package-mode = false
 [tool.poetry.dependencies]
 python = "^3.12"
 google-generativeai = "^0.8.1"
-loguru = "^0.7.2"
 python-dotenv = "^1.0.1"
-click = "^8.1.7"
+pillow = "^11.0.0"
+loguru = "^0.7.2"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.8.0"
+black = {extras = ["jupyter"], version = "^24.10.0"}
 isort = "^5.13.2"
 pytest = "^8.3.3"
 mypy = "^1.11.2"
 autoflake = "^2.3.1"
+jupyterlab = "^4.2.5"
+ipywidgets = "^8.1.5"
+jupyterlab-vim = "^4.1.4"
+jupyterlab-theme-solarized-dark = "^3.0.1"
+pretty-errors = "^1.2.25"
+
+[tool.poetry.group.release.dependencies]
 git-cliff = "^2.6.1"
 
 [build-system]
