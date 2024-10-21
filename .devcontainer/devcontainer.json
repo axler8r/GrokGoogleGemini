@@ -15,6 +15,7 @@
 			"extensions": [
 				"ms-python.python",
 				"ms-python.vscode-pylance",
+				"ms-toolsai.jupyter",
 				"github.copilot",
 				"tamasfe.even-better-toml"
 			]

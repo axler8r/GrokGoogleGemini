@@ -5,6 +5,7 @@ PYTHON = python3
 PROJECT_NAME = grokgemini
 SRC_DIR = $(PROJECT_NAME)
 DOC_DIR = doc
+IPYNB_DIR = ipynb
 LOG_DIR = log
 OUT_DIR = out
 RES_DIR = res
@@ -40,6 +41,7 @@ deactivate:
 
 clean-runfiles:
 	rm -rf **/__pycache__
+	rm -rf **/.ipynb_checkpoints
 
 clean-output:
 	rm -f $(OUT_DIR)/*
@@ -58,9 +60,9 @@ format:
 		--remove-all-unused-imports \
 		--remove-unused-variables   \
 		--in-place                  \
-		--recursive $(SRC_DIR) $(TST_DIR)
-	$(PYTHON) -m isort $(SRC_DIR) $(TST_DIR)
-	$(PYTHON) -m black $(SRC_DIR) $(TST_DIR)
+		--recursive $(SRC_DIR) $(TST_DIR) $(IPYNB_DIR)
+	$(PYTHON) -m isort $(SRC_DIR) $(TST_DIR) $(IPYNB_DIR)
+	$(PYTHON) -m black $(SRC_DIR) $(TST_DIR) $(IPYNB_DIR)
 
 check:
 	@echo "Checking $(PROJECT_NAME)..."
