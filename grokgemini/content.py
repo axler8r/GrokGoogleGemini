@@ -19,6 +19,7 @@ from typing import Any, List, Optional
 import google.generativeai as genai
 import PIL.Image as Image
 from google.generativeai.types.generation_types import GenerateContentResponse
+from loguru import logger as __logger
 
 
 def generate(
@@ -46,6 +47,8 @@ def generate(
         Exception: If an unexpected error occurs.
     """
     try:
+        __logger.debug("Generate content...")
+
         genai.configure(api_key=api_key)
         model_instance = genai.GenerativeModel(
             model_name=model, system_instruction=system_instruction
@@ -53,6 +56,9 @@ def generate(
         content: GenerateContentResponse = model_instance.generate_content(
             ''.join(instruction), stream=stream
         )
+
+        __logger.debug("Generated content...")
+
         return content
 
     except Exception:
@@ -81,6 +87,8 @@ def describe(
     system_instruction: Optional[str] = None,
 ) -> None:
     try:
+        __logger.debug("Describe content...")
+
         genai.configure(api_key=api_key)
         model_instance = genai.GenerativeModel(
             model_name=model, system_instruction=system_instruction
@@ -90,6 +98,9 @@ def describe(
         content: GenerateContentResponse = model_instance.generate_content(
             instructions, stream=stream
         )
+
+        __logger.debug("Described content...")
+
         return content
 
     except Exception:

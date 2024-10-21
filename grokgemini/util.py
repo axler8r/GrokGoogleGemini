@@ -2,12 +2,15 @@ import argparse
 import os
 
 from dotenv import load_dotenv
+from loguru import logger as __logger
 
 __version__ = "0.7.0"
 
 
 # fmt: off
 def parse_arguments() -> argparse.Namespace:
+    __logger.debug("Parse arguments...")
+
     parser = argparse.ArgumentParser(description="Generate content using Google Gemini API")
 
     # information arguments
@@ -35,13 +38,20 @@ def parse_arguments() -> argparse.Namespace:
     except argparse.ArgumentError as e:
         raise e
 
+    __logger.debug("Parsed arguments...")
+
     return namesapce
 # fmt: on
 
 
 def get_key():
+    __logger.debug("Get API key...")
+
     load_dotenv()
     api_key: str | None = os.getenv("AX_GOOGLE_GEMNINI_API_KEY")
     if not api_key:
         raise ValueError("API key not found in environment variables")
+
+    __logger.debug("Got API key...")
+
     return api_key
