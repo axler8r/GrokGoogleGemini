@@ -14,9 +14,10 @@ Functions:
         Raises a NotImplementedError indicating that image generation is not yet implemented.
 """
 
-from typing import Optional
+from typing import Any, List, Optional
 
 import google.generativeai as genai
+import PIL.Image as Image
 from google.generativeai.types.generation_types import GenerateContentResponse
 
 
@@ -50,16 +51,46 @@ def generate(
             model_name=model, system_instruction=system_instruction
         )
         content: GenerateContentResponse = model_instance.generate_content(
-            instruction, stream=stream
+            ''.join(instruction), stream=stream
         )
         return content
-
-    except genai.APIError as e:
-        raise
 
     except Exception:
         raise
 
 
-def describe() -> None:
-    raise NotImplementedError("Image generation is not yet implemented")
+def _load_image(image_path: str) -> Image.Image:
+    """
+    Loads an image from the specified path.
+
+    Args:
+        image_path (str): The path to the image file.
+
+    Returns:
+        Image.Image: The loaded image.
+    """
+    return Image.open(image_path)
+
+
+def describe(
+    instruction: str,
+    parts: List[str],
+    model: str,
+    api_key: str,
+    stream: bool = False,
+    system_instruction: Optional[str] = None,
+) -> None:
+    try:
+        genai.configure(api_key=api_key)
+        model_instance = genai.GenerativeModel(
+            model_name=model, system_instruction=system_instruction
+        )
+        instructions: List[Any] = [_load_image(part) for part in parts]
+        instructions.append(''.join(instruction))
+        content: GenerateContentResponse = model_instance.generate_content(
+            instructions, stream=stream
+        )
+        return content
+
+    except Exception:
+        raise

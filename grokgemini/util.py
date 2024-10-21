@@ -8,11 +8,6 @@ __version__ = "0.7.0"
 
 # fmt: off
 def parse_arguments() -> argparse.Namespace:
-    class DependOnFileArgument(argparse.Action):
-        def __call__(self, parser, namespace, values, option_string=None):
-            if not getattr(namespace, "file"):
-                parser.error("Missing one or more --file arguments")
-
     parser = argparse.ArgumentParser(description="Generate content using Google Gemini API")
 
     # information arguments
@@ -24,13 +19,13 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--output", type=str, help="Output file name")
     parser.add_argument("--stream", action="store_true", help="Stream the output")
     # parser.add_argument("--configuration", type=argparse.FileType("r"), help="Configuration file")
-    parser.add_argument("--file", type=argparse.FileType("rb"), action="append", help="Binary file(s) to process")
+    parser.add_argument("--file", dest="parts", type=str, action="append", help="Name(s) of binary file(s)")
 
     # task arguments
     group: argparse._MutuallyExclusiveGroup = parser.add_mutually_exclusive_group()
     group.add_argument("--list-models", action="store_true", help="List available models")
     group.add_argument("--generate", action="store_true", help="Generate text content")
-    group.add_argument("--describe", action=DependOnFileArgument, help="Describe one or more images")
+    group.add_argument("--describe", action="store_true", help="Describe one or more images")
     
     # positional arguments
     parser.add_argument("instruction", nargs="*", help="Input for the generation")
