@@ -4,14 +4,14 @@ import os
 from dotenv import load_dotenv
 from loguru import logger as __logger
 
-__version__ = "0.7.0"
+from grokgemini import __app_name__, __version__
 
 
 # fmt: off
 def parse_arguments() -> argparse.Namespace:
     __logger.debug("Parse arguments...")
 
-    parser = argparse.ArgumentParser(description="Generate content using Google Gemini API")
+    parser = argparse.ArgumentParser(prog=__app_name__, description="Generate content using Google Gemini API")
 
     # information arguments
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
