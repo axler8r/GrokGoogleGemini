@@ -86,6 +86,23 @@ def describe(
     stream: bool = False,
     system_instruction: Optional[str] = None,
 ) -> None:
+    """
+    Generates content based on the provided instructions and parts using a specified generative model.
+
+    Args:
+        instruction (str): The main instruction to guide content generation.
+        parts (List[str]): A list of parts (e.g., image paths) to be included in the content generation process.
+        model (str): The name of the generative model to be used.
+        api_key (str): The API key for authenticating with the generative model service.
+        stream (bool, optional): Whether to stream the content generation process. Defaults to False.
+        system_instruction (Optional[str], optional): An optional system instruction to configure the model. Defaults to None.
+
+    Returns:
+        GenerateContentResponse: The generated content response from the model.
+
+    Raises:
+        Exception: If any error occurs during the content generation process.
+    """
     try:
         __logger.debug("Describe content...")
 
