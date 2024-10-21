@@ -10,9 +10,6 @@ from grokgemini.util import get_key, parse_arguments
 
 
 def _generate(args, api_key):
-    system_instruction: str | None = (
-        args.system_instruction.read() if args.system_instruction else None
-    )
     __logger.debug("Generate content...")
 
     content: GenerateContentResponse = generate(
@@ -20,7 +17,7 @@ def _generate(args, api_key):
         model=args.model,
         api_key=api_key,
         stream=args.stream,
-        system_instruction=system_instruction,
+        system_instruction=args.system_instruction,
     )
     if args.stream:
         for chunk in content:
@@ -35,9 +32,6 @@ def _generate(args, api_key):
 
 
 def _describe(args, api_key):
-    system_instruction: str | None = (
-        args.system_instruction.read() if args.system_instruction else None
-    )
     __logger.debug("Describe content...")
 
     content: GenerateContentResponse = describe(
@@ -46,7 +40,7 @@ def _describe(args, api_key):
         model=args.model,
         api_key=api_key,
         stream=args.stream,
-        system_instruction=system_instruction,
+        system_instruction=args.system_instruction,
     )
     if args.stream:
         for chunk in content:
@@ -70,13 +64,16 @@ if __name__ == "__main__":
     if args.generate:
         __logger.info("Generate content...")
         _generate(args, api_key)
+        exit(0)
 
     if args.describe and not args.parts:
-        args.error("The --describe argument requires at least one --file argument")
         __logger.error("The --describe argument requires at least one --file argument")
+        print("The --describe argument requires at least one --file argument")
+        exit(1)
     else:
         __logger.info("Describe content...")
         _describe(args, api_key)
+        exit(0)
 
     if args.list_models:
         __logger.info("List models...")
@@ -84,3 +81,4 @@ if __name__ == "__main__":
         models = genai.list_models()
         for model in models:
             pprint.pprint(model.display_name)
+        exit(0)

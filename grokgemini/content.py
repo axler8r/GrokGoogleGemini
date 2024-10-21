@@ -54,7 +54,7 @@ def generate(
             model_name=model, system_instruction=system_instruction
         )
         content: GenerateContentResponse = model_instance.generate_content(
-            ''.join(instruction), stream=stream
+            "".join(instruction), stream=stream
         )
 
         __logger.debug("Generated content...")
@@ -111,7 +111,7 @@ def describe(
             model_name=model, system_instruction=system_instruction
         )
         instructions: List[Any] = [_load_image(part) for part in parts]
-        instructions.append(''.join(instruction))
+        instructions.append("".join(instruction))
         content: GenerateContentResponse = model_instance.generate_content(
             instructions, stream=stream
         )
