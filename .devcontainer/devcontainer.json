@@ -8,7 +8,12 @@
 		"--cpus", "1"
 	],
 	"features": {
-		"ghcr.io/devcontainers-contrib/features/poetry": {}
+		"ghcr.io/devcontainers-contrib/features/poetry": {},
+		"ghcr.io/devcontainers-extra/features/apt-get-packages": {
+			"packages": [
+				"tig", "git-flow", "neovim"
+			]
+		}
 	},
 	"customizations": {
 		"vscode": {
